@@ -1,0 +1,42 @@
+PROCEDURE: 
+		- updateOrderDetails - подтягивает стоимость товара из таблицы Products
+		- sumOrders - подсчитывает общую сумму покупки в таблице Orders
+		- cartOptionsTotalSum	- подсчитывает сумму товара - количество на стоимость товара в корзине (cart_to_options)
+		- sumTotalCart - подсчитывает общую сумму товара в корзине
+		- Report - итоговый отчет по orders за период с какой даты по какую дату
+		- categoryProducts - предоставляет список товаров, которые относяться к определенной категории. Входящий параметр - имя 		  категории
+
+
+STORED GENERATED  - после updateOrderDetails считает сумму товара - количество на стоимость товара
+
+SQL REQUEST - 
+
+************************************************************************************************************
+	Выбрать все опции товара из options_product, по id_prod=3, сгруппировать по опциям(цвет, тип, размер) и их id:
+	-----------------------------------------------------------------------------------------------------
+SELECT P.id_prod, P.name_prod, GROUP_CONCAT(T.id_type) as ID_TYPE, GROUP_CONCAT(T.name_type) as Type_Name, GROUP_CONCAT(C.id_color) as ID_color, GROUP_CONCAT(C.name_color) as Color_Name, GROUP_CONCAT(S.id_size) as ID_Size, GROUP_CONCAT(S.name_size) as Size_Name FROM options_product as OP, products as P, type as T, color as C, sizes as S WHERE OP.id_product=P.id_prod and OP.id_type=T.id_type and OP.id_color=C.id_color and OP.id_size=S.id_size and P.id_prod=3 GROUP BY P.id_prod
+************************************************************************************************************
+	Выбрать все опции товара из options_product, по id_prod=3, сгруппировать по опциям(цвет, тип, размер): 
+	----------------------------------------------------------------------------------------------------
+SELECT P.id_prod, P.name_prod, GROUP_CONCAT(T.name_type) as Type_Name, GROUP_CONCAT(C.name_color) as Color_Name, GROUP_CONCAT(S.name_size) FROM options_product as OP, products as P, type as T, color as C, sizes as S WHERE OP.id_product=P.id_prod and OP.id_type=T.id_type and OP.id_color=C.id_color and OP.id_size=S.id_size and P.id_prod=3 GROUP BY P.id_prod
+************************************************************************************************************
+	Выбрать все опции товара из options_product, по id_prod=1:
+	---------------------------------------------------------
+SELECT * FROM options_product as OP, products as P, type as T, color as C, sizes as S WHERE OP.id_product=P.id_prod and OP.id_type=T.id_type and OP.id_color=C.id_color and OP.id_size=S.id_size and P.id_prod=1
+************************************************************************************************************
+	Выбрать все опции товара из options_product, и показать эти товары с их опциями:
+	-------------------------------------------------------------------------------
+SELECT * FROM options_product as OP, products as P, type as T, color as C, sizes as S WHERE OP.id_product=P.id_prod and OP.id_type=T.id_type and OP.id_color=C.id_color and OP.id_size=S.id_size
+*************************************************************************************************************
+	Выбрать товары по категориям, а также состав материала каждого товара:
+	---------------------------------------------------------------------
+SELECT * FROM categories as C, product_to_categories AS PC, products as P, structure as S WHERE C.id_category = PC.id_category and PC.id_product=P.id_prod and P.id_structure=S.id_structure
+*************************************************************************************************************	
+	Выбрать товары по категориям и сгруппировать id_prod и name_prod:
+	---------------------------------------------------------------
+SELECT C.id_category, GROUP_CONCAT(P.id_prod) as id_products, GROUP_CONCAT(P.name_prod) as products FROM categories as C, products as P, product_to_categories as PC WHERE C.id_category=PC.id_category and P.id_prod=PC.id_product GROUP BY C.id_category
+
+*************************************************************************************************************
+	Выбрать товары по категориям:
+	-----------------------------
+SELECT C.id_category, C.name_category as category, P.id_prod, P.name_prod as products FROM categories as C, products as P, 		product_to_categories as PC WHERE C.id_category=PC.id_category and P.id_prod=PC.id_product
